@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- <script type="text/javascript" src="../lib/d3.v5.min.js"></script> -->
+<style>
+    #mapid {
+        height: 700px;
+        width: 1000px
+    }
+    
+    #title {
+        font-family: Helvetica, sans-serif;
+    }
+</style>
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+    <title>DVA Project - Map Test</title>
+
+</head>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+
+<body>
+    <h1 id="title">DVA Project - Leaflet Map Test</h1>
+    <div id="mapid"></div>
+
+
+
+    <script>
+        var lot_lookup = function(data, lot_id) {
+            // Look up a lot 
+            //
+            //      Args:
+            //          lot_id (str): lot source_id from NYC Open Data.
+            // 
+            //      Returns:
+            //          selected_lot (object): lot geometry and properties
+            var selected_lot = data.filter(function(d) {
+                return d.properties.source_id == lot_id
+            })
+            return selected_lot
+        }
+
+        Promise.all([
+            // enter code to read files
+            d3.json("lots.geojson")
+        ]).then(data => {
+            // console.log(data)
+
+            var selected_lot = lot_lookup(data[0].features, "12500000183")
+            console.log(selected_lot)
+
+            var map = L.map('mapid').setView([40.75659891087263, -74.00427734302667], 15) //17
+
+
+            // L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            //     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            //     maxZoom: 18,
+            //     id: 'mapbox/light-v9', //https://stackoverflow.com/questions/37166172/mapbox-tiles-and-leafletjs
+            //     tileSize: 512,
+            //     zoomOffset: -1,
+            //     accessToken: 'pk.eyJ1IjoibHNjYXJtaWMiLCJhIjoiY2t2OW13Z2cyMGRlMTMxdDJ0ajRkamJnYiJ9.Sy8gK_isbVDp3N7kkvErIw'
+            // }).addTo(map);
+
+            L.tileLayer('https://api.mapbox.com/styles/v1/lscarmic/ckvbct6f828p314s53de7nuav/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                // id: 'mapbox/light-v9', //https://stackoverflow.com/questions/37166172/mapbox-tiles-and-leafletjs
+                tileSize: 512,
+                zoomOffset: -1,
+                accessToken: 'pk.eyJ1IjoibHNjYXJtaWMiLCJhIjoiY2t2OW13Z2cyMGRlMTMxdDJ0ajRkamJnYiJ9.Sy8gK_isbVDp3N7kkvErIw'
+            }).addTo(map);
+
+
+            // var circle = L.circle([40.75659891087263, -74.00427734302669], { 
+            //     color: 'blue',
+            //     fillColor: '#f03',
+            //     fillOpacity: 0.5,
+            //     radius: 100
+            // }).addTo(map);
+
+            var lot_style = {
+                // color: 'green',
+                // fillColor: '#f03',
+                fillOpacity: 0.5,
+                weight: 1,
+            };
+
+            // L.geoJSON(selected_lot, { 
+            //     style: lot_style 
+            // }).addTo(map);
+
+            L.geoJSON(data[0].features, {
+                style: lot_style
+            }).addTo(map);
+
+
+
+
+        })
+    </script>
+
+</body>
